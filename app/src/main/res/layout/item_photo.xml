@@ -1,0 +1,48 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="photo" type="com.example.test.network.Photo" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/photo_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="data"
+            app:imageUrl="@{photo}" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="16dp">
+
+            <TextView
+                android:id="@+id/photo_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{photo.title}"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/photo_album_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{``+photo.albumId}"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
