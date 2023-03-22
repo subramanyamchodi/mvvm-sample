@@ -1,22 +1,23 @@
 package com.example.test.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.test.databinding.ActivityMainBinding
+import com.example.test.network.Photo
 import com.example.test.viewmodel.PhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class PhotoListActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityMainBinding
     private lateinit var photoViewModel: PhotoViewModel
@@ -38,7 +39,6 @@ class MainActivity : AppCompatActivity() {
                 launch {
                     photoViewModel.photos.collectLatest {
                         if (it != null) {
-                            initAdapter()
                             photoViewModel.photoAdapter.submitList(it)
                         }
                     }
@@ -51,18 +51,25 @@ class MainActivity : AppCompatActivity() {
                 }
                 launch {
                     photoViewModel.error.collectLatest {
-                        Toast.makeText(this@MainActivity, it, Toast.LENGTH_LONG).show()
+                        if (it.isNotEmpty()) {
+                            Toast.makeText(this@PhotoListActivity, it, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+                launch {
+                    photoViewModel.selectedPhoto.collectLatest {
+                        goToDetailsScreen(it)
                     }
                 }
             }
         }
     }
 
-    private fun initAdapter() {
-        if (viewBinding.recyclerView.adapter == null) {
-            photoViewModel.photoAdapter.setOnItemClickListener {
-
+    private fun goToDetailsScreen(photo: Photo) {
+        startActivity(
+            Intent(this, PhotoDetailsActivity::class.java).apply {
+                putExtra("photo", photo)
             }
-        }
+        )
     }
 }

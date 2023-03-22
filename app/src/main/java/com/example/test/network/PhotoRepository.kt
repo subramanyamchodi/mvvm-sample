@@ -10,9 +10,6 @@ class PhotoRepository @Inject constructor(
     private val apiService: ApiService,
     val responseHandler: ResponseHandler
 ) {
-
-    suspend fun getPhotos() = apiService.getPhotos()
-
     suspend fun getPhotosData() = safeApiCall({
         apiService.getPhotosData()
     })

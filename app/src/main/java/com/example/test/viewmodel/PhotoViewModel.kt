@@ -7,20 +7,16 @@ import com.example.test.network.Photo
 import com.example.test.network.PhotoRepository
 import com.example.test.view.PhotoAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PhotoViewModel @Inject constructor(
-    private val photoRepository: PhotoRepository
+    private val photoRepository: PhotoRepository,
+    val photoAdapter: PhotoAdapter
 ) : ViewModel() {
-
-    val photoAdapter by lazy {
-        PhotoAdapter()
-    }
 
     private val _photos = MutableStateFlow<List<Photo>?>(null)
     val photos = _photos.asStateFlow()
@@ -31,14 +27,14 @@ class PhotoViewModel @Inject constructor(
     private val _error = MutableStateFlow("")
     val error = _error.asStateFlow()
 
-    fun getPhotos() {
-        viewModelScope.launch {
-            _loading.emit(true)
-            val response = photoRepository.getPhotos()
-            if (response.isSuccessful) {
-                _photos.emit(response.body())
+    private val _selectedPhoto = MutableSharedFlow<Photo>()
+    val selectedPhoto = _selectedPhoto.asSharedFlow()
+
+    init {
+        photoAdapter.setOnItemClickListener { photo ->
+            viewModelScope.launch {
+                _selectedPhoto.emit(photo)
             }
-            _loading.emit(false)
         }
     }
 

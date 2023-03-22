@@ -8,8 +8,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
 import com.example.test.databinding.ItemPhotoBinding
 import com.example.test.network.Photo
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Inject
 
-class PhotoAdapter : ListAdapter<Photo, PhotoAdapter.PhotoViewHolder>(PhotoDiffCallback()) {
+@ViewModelScoped
+class PhotoAdapter @Inject constructor(
+    photoDiffCallback: PhotoDiffCallback
+) : ListAdapter<Photo, PhotoAdapter.PhotoViewHolder>(photoDiffCallback) {
 
     private var listener: ((Photo) -> Unit)? = null
 

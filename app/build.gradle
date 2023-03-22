@@ -23,7 +23,12 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
         }
     }
     compileOptions {
@@ -33,6 +38,14 @@ android {
     /*kotlinOptions {
         jvmTarget = '1.8'
     }*/
+    testOptions {
+        unitTests {
+            // Configure the unit test runtime environment
+            // to use the JVM instead of the Android runtime
+            includeAndroidResources = true
+            returnDefaultValues = true
+        }
+    }
     buildFeatures {
         viewBinding = true
         dataBinding = true

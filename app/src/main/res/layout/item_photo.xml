@@ -8,7 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:background="?selectableItemBackground"
+        android:layout_margin="4dp"
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/photo_image"
@@ -29,7 +31,7 @@
                 android:id="@+id/photo_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{photo.title}"
+                android:text="@{`Title: ` + photo.title}"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="16sp" />
@@ -38,7 +40,7 @@
                 android:id="@+id/photo_album_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{``+photo.albumId}"
+                android:text="@{`Album Id: `+photo.albumId}"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray" />
 
