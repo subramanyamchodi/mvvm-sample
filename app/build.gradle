@@ -69,6 +69,7 @@ dependencies {
 
     implementation "com.google.dagger:hilt-android:2.45"
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 //    implementation 'com.google.dagger:dagger-android-support:2.42'
     kapt "com.google.dagger:hilt-compiler:2.45"
     implementation "com.squareup.picasso:picasso:2.71828"
@@ -80,6 +81,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-junit-jupiter:5.1.1'
     testImplementation 'net.bytebuddy:byte-buddy:1.12.22'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
+    testImplementation 'app.cash.turbine:turbine:0.12.3'
 
 
 //    androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:2.25.1'

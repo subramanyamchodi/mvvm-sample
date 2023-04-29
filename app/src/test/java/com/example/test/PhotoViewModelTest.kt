@@ -1,5 +1,6 @@
 package com.example.test
 
+import app.cash.turbine.test
 import com.example.app.network.ApiResponse
 import com.example.test.network.ApiService
 import com.example.test.network.Photo
@@ -57,9 +58,62 @@ class PhotoViewModelTest {
         mainThreadSurrogate.close()
     }
 
+//    @OptIn(ExperimentalCoroutinesApi::class)
+//    @Test
+//    fun testGetPhotosData() = runTest {
+//        // Mock ApiService response
+//        val photos = listOf(
+//            Photo(
+//                1,
+//                1,
+//                "title 1",
+//                "https://via.placeholder.com/600/92c952",
+//                "https://via.placeholder.com/600/92c952"
+//            ),
+//            Photo(
+//                2,
+//                1,
+//                "title 2",
+//                "https://via.placeholder.com/600/771796",
+//                "https://via.placeholder.com/600/92c952"
+//            )
+//        )
+//        val mockResponse = ApiResponse.Success(
+//            photos, -1
+//        )
+//        `when`(photoRepository.getPhotosData()).thenReturn(mockResponse)
+//        val photoList = mutableListOf<Photo>()
+//        backgroundScope.launch {
+//            viewModel.photos.collectLatest {
+//                it?.forEach {
+//                    photoList.add(it)
+//                }
+//            }
+//        }
+//        viewModel.getPhotosData()
+//        advanceTimeBy(3000)
+//        println(photoList)
+//        assertEquals(mockResponse.responseData, photoList)
+//    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testGetPhotosData() = runTest {
+    fun testError() = runTest {
+        val mockResponse = ApiResponse.Error<List<Photo>>(
+            "No data found", -1, Any()
+        )
+        `when`(photoRepository.getPhotosData()).thenReturn(mockResponse)
+        backgroundScope.launch {
+            viewModel.error.collectLatest {}
+        }
+        viewModel.getPhotosData()
+        advanceTimeBy(1000)
+        assertEquals(mockResponse.msg, viewModel.error.value)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun testGetPhotosDataTurbine() = runTest {
         // Mock ApiService response
         val photos = listOf(
             Photo(
@@ -81,31 +135,23 @@ class PhotoViewModelTest {
             photos, -1
         )
         `when`(photoRepository.getPhotosData()).thenReturn(mockResponse)
-        val photoList = mutableListOf<Photo>()
-        backgroundScope.launch {
-            viewModel.photos.collectLatest {
-                it?.forEach {
-                    photoList.add(it)
-                }
-            }
+        viewModel.photos.test {
+            skipItems(1)
+            viewModel.getPhotosData()
+            val data = awaitItem()
+            println(data)
+            assertEquals(mockResponse.responseData, data)
         }
-        viewModel.getPhotosData()
-        advanceTimeBy(3000)
-        assertEquals(mockResponse.responseData, photoList)
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun testError() = runTest {
-        val mockResponse = ApiResponse.Error<List<Photo>>(
-            "No data found", -1, Any()
-        )
-        `when`(photoRepository.getPhotosData()).thenReturn(mockResponse)
-        backgroundScope.launch {
-            viewModel.error.collectLatest {}
+        viewModel.loading.test {
+            skipItems(1)
+            viewModel.getPhotosData()
+            val second = awaitItem()
+            println(second)
+            assertEquals(true, second)
+            val third = awaitItem()
+            println(third)
+            assertEquals(false, third)
+            cancelAndIgnoreRemainingEvents()
         }
-        viewModel.getPhotosData()
-        advanceTimeBy(1000)
-        assertEquals(mockResponse.msg, viewModel.error.value)
     }
 }
